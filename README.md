@@ -68,10 +68,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ![User Profile](demo/user_list_4.png)
 
-## User List
-
-![User Profile](demo/user_list_4.png)
-
 ## Post new category
 
 ![User Profile](demo/add_category_8.png)

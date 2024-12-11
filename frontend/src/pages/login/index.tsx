@@ -3,144 +3,128 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/global/Button";
 import Input from "../../components/global/Input";
 import Message from "../../components/global/Message";
-import images from "../../constants/images";
 import { HOME, REGISTRATION } from "../../constants/routes";
 import { validateUserLoginForm } from "../../helpers/validateFormData";
 import { useAppDispatch, useAppSelector } from "../../redux/app/hooks";
 import {
-    prepareUserLogin,
-    selectAuth,
+  prepareUserLogin,
+  selectAuth,
 } from "../../redux/features/login/loginSlice";
 import { LoginFormData, LoginFormError } from "../../types/types";
 
 const Login = () => {
-    const navigate = useNavigate();
-    const { error, isError, isLoading, token, user } =
-        useAppSelector(selectAuth);
-    const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { error, isError, isLoading, token, user } = useAppSelector(selectAuth);
+  const dispatch = useAppDispatch();
 
-    const [formData, setFormData] = useState<LoginFormData>({
-        email: "",
-        password: "",
-    });
-    const [formError, setFormError] = useState<LoginFormError>({
-        emailError: "",
-        passwordError: "",
-    });
-    const handleChange: React.ChangeEventHandler<HTMLInputElement> = (
-        event
-    ): void => {
-        const name = event.target.name;
-        const value = event.target.value;
-        setFormData({ ...formData, [name]: value });
-    };
+  const [formData, setFormData] = useState<LoginFormData>({
+    email: "",
+    password: "",
+  });
+  const [formError, setFormError] = useState<LoginFormError>({
+    emailError: "",
+    passwordError: "",
+  });
 
-    /* @DESC::  handling userLogin */
-    const handlerUserLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-        const getValidData = validateUserLoginForm(formData);
-        setFormError(getValidData);
+  const handleUserLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
 
-        if (Object.keys(getValidData).length === 0) {
-            const reqData = {
-                username: formData.email,
-                password: formData.password,
-            };
+    const validationErrors = validateUserLoginForm(formData);
+    setFormError(validationErrors);
 
-            dispatch(prepareUserLogin(reqData));
-        }
-    };
+    if (Object.keys(validationErrors).length === 0) {
+      const loginData = {
+        username: formData.email,
+        password: formData.password,
+      };
 
-    let showError = null;
-    if (isError) {
-        showError = <Message error={isError} message={error} />;
+      dispatch(prepareUserLogin(loginData));
     }
+  };
 
-    useEffect(() => {
-        if (user && token) {
-            navigate(HOME);
-        }
-    }, [navigate, token, user]);
+  let showError = null;
+  if (isError) {
+    showError = <Message error={isError} message={error} />;
+  }
 
-    return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
-            <div className="bg-white flex items-center justify-center py-8">
-                <div className="  w-10/12  sm:w-8/12 md:w-7/12 lg:w-10/12 xl:w-6/12 ">
-                    <div className=" flex mb-8 justify-center lg:hidden">
-                        <Link to={HOME}>
-                            <img
-                                alt="blog_image"
-                                className=" w-[150px] xs:w-[180px] sm:w-[200px] lg:w-[300px] object-cover"
-                                src={images.logoBlack}
-                            />
-                        </Link>
-                    </div>
-                    <div>
-                        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold  text-gary-800">
-                            Welcome Back
-                        </h1>
-                        <p className="text-gray-600 text-sm md:text-lg mb-4">
-                            Welcome back! Please enter Your details
-                        </p>
-                    </div>
+  useEffect(() => {
+    if (user && token) {
+      navigate(HOME);
+    }
+  }, [navigate, token, user]);
 
-                    <div>
-                        <Input
-                            onChange={handleChange}
-                            name="email"
-                            message={formError.emailError}
-                            label="Email"
-                            placeholder="Enter your email"
-                            value={formData.email}
-                        />
-                        <Input
-                            onChange={handleChange}
-                            name="password"
-                            message={formError.passwordError}
-                            label="Password"
-                            placeholder="Enter your password"
-                            value={formData.password}
-                            type="password"
-                        />
-                        <div className="flex justify-end">
-                            <button className="mt-1 mb-1 text-primary-500 cursor-pointer hover:underline text-right ">
-                                Forget Password
-                            </button>
-                        </div>
+  return (
+    <div className="relative min-h-screen bg-[#f7f7f7] flex items-center justify-center">
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gray-600 opacity-10"></div>
 
-                        <Button
-                            onClick={handlerUserLogin}
-                            title="Sign in"
-                            loading={isLoading}
-                            className="bg-[#c2272f] shadow-none hover:bg-[#c2272f]"
-                        />
-                        <div className="flex items-center justify-center">
-                            <p className="text-sm text-gray-600 mr-2">{`Don't Have Account?`}</p>{" "}
-                            <button
-                                onClick={() => navigate(REGISTRATION)}
-                                className="text-primary-500 cursor-pointer font-semibold hover:underline transition"
-                            >
-                                Sign up
-                            </button>
-                        </div>
-
-                        {showError}
-                    </div>
-                </div>
-            </div>
-            <div className="bg-black hidden lg:flex items-center justify-center">
-                <Link to={HOME}>
-                    <img
-                        alt="blog_image"
-                        className=" w-[150px] xs:w-[180px] sm:w-[200px] lg:w-[300px] object-cover "
-                        // src={images.logo}
-                        src = "/astavet-logo.png"
-                    />
-                </Link>
-            </div>
+      <div className="w-full sm:w-96 bg-white shadow-lg rounded-lg p-8 relative z-10">
+        <div className="text-center mb-6">
+          <Link to={HOME}>
+            <img alt="logo" className="w-40 mx-auto" src="/astavet-logo.png" />
+          </Link>
         </div>
-    );
+
+        <h2 className="text-3xl font-semibold text-gray-800 mb-4 text-center">
+          Log In
+        </h2>
+        <p className="text-gray-600 mb-6 text-center">
+          Sign in to manage your account and stay connected.
+        </p>
+
+        {/* Form đăng nhập */}
+        <div>
+          <Input
+            onChange={handleChange}
+            name="email"
+            message={formError.emailError}
+            label="Email"
+            placeholder="Enter your email"
+            value={formData.email}
+          />
+          <Input
+            onChange={handleChange}
+            name="password"
+            message={formError.passwordError}
+            label="Password"
+            placeholder="Enter your password"
+            value={formData.password}
+            type="password"
+          />
+          <div className="flex justify-end mb-4">
+            <button className="text-primary-600 hover:underline text-sm">
+              Forgot Password?
+            </button>
+          </div>
+
+          <Button
+            onClick={handleUserLogin}
+            title="Sign In"
+            loading={isLoading}
+            className="w-full bg-[#c2272f] hover:bg-red-700 text-white py-3 rounded-full shadow-none"
+          />
+        </div>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Don’t have an account?{" "}
+            <button
+              onClick={() => navigate(REGISTRATION)}
+              className="text-primary-600 hover:underline font-semibold"
+            >
+              Sign up
+            </button>
+          </p>
+        </div>
+        {showError && <div className="mt-4">{showError}</div>}
+      </div>
+    </div>
+  );
 };
 
 export default Login;

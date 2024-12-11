@@ -64,10 +64,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ![User Profile](demo/profile_4.png)
 
-## Admin Dashboard
-
-![User Profile](demo/user_dashboard_7.png)
-
 ## User List
 
 ![User Profile](demo/user_list_4.png)
